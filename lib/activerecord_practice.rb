@@ -24,68 +24,69 @@ class Customer < ActiveRecord::Base
 
   def self.with_valid_email
     # YOUR CODE HERE to return only customers with valid email addresses (containing '@')
-    Customer.where("email LIKE ?", "%@%").all
+    Customer.where("email LIKE '%@%'")
   end
   # etc. - see README.md for more details
 
   def self.with_dot_org_email
     # return an email with .org
-    Customer.where("email LIKE ?", "%@%.org").all
+    Customer.where("email LIKE '%.org%'")
   end
 
   def self.with_invalid_email
     # return an email without @
-    Customer.where("email NOT LIKE ?", "%@%").all
+    Customer.where("email NOT LIKE '%@%'")
   end
 
   def self.born_before_1980
     # return customer born before 1 Jan 1980
-    Customer.where("birthdate < ?", "1980-01-01").all
+    Customer.where("birthdate < '1980-01-01'")
   end
 
   def self.with_valid_email_and_born_before_1980
     # return customer with valid email (containing @) and born before 1 Jan 1980
-    Customer.where("email LIKE ?", "%@%").where("birthdate < ?", "1980-01-01").all
+    Customer.where("email LIKE '%@%' AND birthdate < '1980-01-01'")
   end
 
   def self.with_blank_email
     # return customer with blank email
-    Customer.where("email is null").all
+    Customer.where("email IS NULL")
   end
 
   def self.last_names_starting_with_b
     # return customer with last name starting with B and sorted by birthdate
-    Customer.where("last LIKE ?", "B%").order("birthdate")
+    Customer.where("last LIKE 'B%'").order(:birthdate)
   end
 
   # without where =================================
 
   def self.twenty_youngest
     # return 20 youngest customers, order/limit
-    Customer.order("birthdate DESC").limit(20)
+    Customer.order(:birthdate => :desc).limit(20)
   end
 
   # with tot update ===============================
 
   def self.update_gussie_murray_birthdate
     # the birthdate of Gussie Murray to February 8,2004 (HINT: lookup `Time.parse`)'
-    Customer.where(first: "Gussie", last: "Murray").update_all(birthdate: Time.parse("February 8, 2004"))
+
     # Time.parse("February 8, 2004") is a ruby method that converts a string to a time object
+    Customer.find_by(first: "Gussie", last: "Murray").update(birthdate: Time.parse("February 8, 2004"))
   end
 
   def self.change_all_invalid_emails_to_blank
     # change all invalid emails to blank
-    Customer.where("email NOT LIKE ?", "%@%").update_all(email: "")
+    Customer.where("email NOT LIKE '%@%'").update_all(email: "")
   end
 
   def self.delete_meggie_herman
     # database by deleting customer Meggie Herman
-    Customer.where(first: "Meggie", last: "Herman").destroy_all
+    Customer.find_by(first: "Meggie", last: "Herman").destroy
   end
 
   def self.delete_everyone_born_before_1978
     # deleting all customers born on or before 31 Dec 1977
-    Customer.where("birthdate <= ?", "1977-12-31").destroy_all
+    Customer.where("birthdate <= '1977-12-31'").destroy_all
   end
 
 
